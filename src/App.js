@@ -1,7 +1,7 @@
 import React from "react";
 
 import "./App.css";
-import BabyNamesData from "./BabyNamesData.json";
+import { BabyNamesData } from "./BabyNamesData.json";
 import SearchInfo from "./SearchInfo.js";
 
 function App() {
