@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import BabyNameIndex from "./BabyNamesData";
-import SearchBar from "./SearchBar.js";
 
 const SearchInfo = (props) => {
-   const { BabyNameIndex } = props;
-   const [searchTerm, setSearchTerm] = useState("");
+  const BabyNameIndex = props.BabyNameIndex;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [results, setResults] = useState(BabyNameIndex);
+
   BabyNameIndex.sort(function (a, b) {
     var nameA = a.name.toLowerCase(),
       nameB = b.name.toLowerCase();
@@ -13,34 +13,60 @@ const SearchInfo = (props) => {
     return 0;
   });
 
-  function handleChange(event) {
+  const handleChange = (event) => {
     setSearchTerm(event.target.value);
-  }
-    const results = BabyNameIndex.filter((baby) => (baby.name).toLowerCase().includes(searchTerm.toLowerCase()));
+    const query = event.target.value;
+    const filteredResults = BabyNameIndex.filter((baby) =>
+      baby.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setResults(filteredResults);
+  };
+
+  const filterGender = (baby) => {
+    console.log(baby);
+    let babyArray = [...BabyNameIndex];
+    if (baby !== "mf")
+      babyArray = BabyNameIndex.filter((babyObj) => babyObj.sex === baby);
+    setResults(babyArray);
+  };
 
   return (
-    <div className="search">
-      <div className="page-header">
-        <h4 className="text-left">Search Names</h4>
-      </div>
+    <div className="searchBox">
+      <button className="btn btn-dark" onClick={() => filterGender("mf")}>
+        All
+      </button>
+      <button className="btn btn-danger" onClick={() => filterGender("f")}>
+        Girls
+      </button>
+      <button className="btn btn-primary" onClick={() => filterGender("m")}>
+        Boys
+      </button>
       <div className="row search-wrapper">
         <div className="col">
           <form className="form-group search-box">
-            <label htmlFor="babyName">Baby name</label>
-            <div className="search-row">
-              <input
-                onChange={handleChange}
-                type="text"
-                id="babyName"
-                className="form-control"
-                placeholder="Baby name"
-              />
-              <SearchBar />
+            <div
+              style={{
+                width: 200,
+                margin: "auto",
+              }}
+            >
+              <div className="search-row">
+                <input
+                  onChange={handleChange}
+                  type="text"
+                  id="babyName"
+                  className="form-control"
+                  placeholder="Search baby names..."
+                />
+              </div>
             </div>
           </form>
           <div>
             {results.map((baby) => (
-              <div key={baby.id}>
+              <div
+                key={baby.id}
+                onClick={(e) => props.favouriteFunction(e, baby.id)}
+              >
                 {baby.sex === "f" ? (
                   <div
                     style={{
